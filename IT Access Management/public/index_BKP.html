@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoodHabitz IT Access Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .edit-badge {
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .read-badge {
+            background: #6c757d;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .controls {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: #e9ecef;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .tab:hover {
+            background: #0056b3;
+            color: white;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .filter-group input, .filter-group select {
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-group input:focus, .filter-group select:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .content {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            min-height: 500px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #007bff;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .access-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-align: center;
+            min-width: 60px;
+            display: inline-block;
+        }
+
+        .access-A { background: #ff8d86; color: #721c24; }
+        .access-E { background: #fbd664; color: #7a6500; }
+        .access-N { background: #a8d08f; color: #2d5016; }
+        .access-O { background: #9dc3e6; color: #0c2d48; }
+
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .role-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .role-card:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .role-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .role-department {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .role-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 0.8rem;
+        }
+
+        .role-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            
+            .filters {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs {
+                justify-content: center;
+            }
+            
+            .action-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 IT Access Management</h1>
+            <p>Manage application access rights across all roles and departments</p>
+            <div class="user-info">
+                <div class="user-badge">
+                    <span>👤 <span id="username">Loading...</span></span>
+                    <span id="user-role" class="read-badge">Read Only</span>
+                </div>
+                <div>
+                    <small>Last updated: <span id="last-updated">Loading...</span></small>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="tabs">
+                <button class="tab active" id="overviewTab">📊 Overview</button>
+                <button class="tab" id="applicationsTab">📱 Applications</button>
+                <button class="tab" id="rolesTab">👥 Roles</button>
+                <button class="tab" id="searchTab">🔍 Search</button>
+                <button class="tab" id="auditTab" style="display: none;">📋 Audit Log</button>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="categoryFilter">Category</label>
+                    <select id="categoryFilter">
+                        <option value="all">All Categories</option>
+                        <option value="Primary Applications">Primary Applications</option>
+                        <option value="Supporting Applications">Supporting Applications</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="searchFilter">Search Applications</label>
+                    <input type="text" id="searchFilter" placeholder="Search by name or owner...">
+                </div>
+                <div class="filter-group">
+                    <label for="roleFilter">Filter by Role</label>
+                    <select id="roleFilter">
+                        <option value="">All Roles</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-secondary" id="exportBtn">📥 Export Excel</button>
+                <button class="btn btn-secondary" id="exportAuditBtn" style="display: none;">📋 Export Audit</button>
+                <button class="btn btn-success" id="addAppBtn" style="display: none;">➕ Add Application</button>
+                <button class="btn btn-primary" id="refreshBtn">🔄 Refresh</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div id="loadingIndicator" class="loading">Loading data...</div>
+            <div id="contentArea" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let accessData = null;
+        let currentView = 'overview';
+        let filteredApplications = [];
+
+        // Initialize the application
+        async function init() {
+            try {
+                await loadUser();
+                await loadData();
+                showOverviewView();
+                setupEventListeners();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                document.getElementById('contentArea').innerHTML = 
+                    '<div style="text-align: center; color: red;">Error loading application. Please refresh the page.</div>';
+                document.getElementById('loadingIndicator').style.display = 'none';
+                document.getElementById('contentArea').style.display = 'block';
+            }
+        }
+
+        // Setup all event listeners
+        function setupEventListeners() {
+            document.getElementById('overviewTab').addEventListener('click', () => switchTab('overview'));
+            document.getElementById('applicationsTab').addEventListener('click', () => switchTab('applications'));
+            document.getElementById('rolesTab').addEventListener('click', () => switchTab('roles'));
+            document.getElementById('searchTab').addEventListener('click', () => switchTab('search'));
+            document.getElementById('auditTab').addEventListener('click', () => switchTab('audit'));
+            
+            document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+            document.getElementById('searchFilter').addEventListener('keyup', applyFilters);
+            document.getElementById('roleFilter').addEventListener('change', applyFilters);
+            
+            document.getElementById('exportBtn').addEventListener('click', exportData);
+            document.getElementById('exportAuditBtn').addEventListener('click', exportAuditLog);
+            document.getElementById('refreshBtn').addEventListener('click', refreshData);
+        }
+
+        // Switch between tabs
+        function switchTab(view) {
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(view + 'Tab').classList.add('active');
+            
+            currentView = view;
+            
+            switch (view) {
+                case 'overview':
+                    showOverviewView();
+                    break;
+                case 'applications':
+                    showApplicationsView();
+                    break;
+                case 'roles':
+                    showRolesView();
+                    break;
+                case 'search':
+                    showSearchView();
+                    break;
+                case 'audit':
+                    showAuditView();
+                    break;
+            }
+        }
+
+        // Load current user information
+        async function loadUser() {
+            try {
+                const response = await fetch('/api/user');
+                currentUser = await response.json();
+                
+                document.getElementById('username').textContent = currentUser.username || 'Unknown';
+                const roleElement = document.getElementById('user-role');
+                
+                if (currentUser.canEdit) {
+                    roleElement.textContent = 'Editor';
+                    roleElement.className = 'edit-badge';
+                    document.getElementById('addAppBtn').style.display = 'inline-block';
+                    document.getElementById('auditTab').style.display = 'inline-block';
+                    document.getElementById('exportAuditBtn').style.display = 'inline-block';
+                } else {
+                    roleElement.textContent = 'Read Only';
+                    roleElement.className = 'read-badge';
+                }
+            } catch (error) {
+                console.error('Error loading user:', error);
+            }
+        }
+
+        // Load application data
+        async function loadData() {
+            try {
+                const response = await fetch('/api/data');
+                accessData = await response.json();
+                
+                document.getElementById('last-updated').textContent = 
+                    new Date(accessData.metadata.lastUpdated).toLocaleString();
+                
+                populateRoleFilter();
+                await applyFilters();
+                
+                document.getElementById('loadingIndicator').style.display = 'none';
+                document.getElementById('contentArea').style.display = 'block';
+                
+                console.log('Data loaded successfully:', accessData);
+            } catch (error) {
+                console.error('Error loading data:', error);
+                throw error;
+            }
+        }
+
+        // Populate role filter dropdown
+        function populateRoleFilter() {
+            const roleFilter = document.getElementById('roleFilter');
+            roleFilter.innerHTML = '<option value="">All Roles</option>';
+            
+            if (accessData && accessData.jobTitles) {
+                accessData.jobTitles.forEach(role => {
+                    const option = document.createElement('option');
+                    option.value = role.title;
+                    option.textContent = role.title;
+                    roleFilter.appendChild(option);
+                });
+            }
+        }
+
+        // Apply current filters
+        async function applyFilters() {
+            const category = document.getElementById('categoryFilter').value;
+            const search = document.getElementById('searchFilter').value;
+            const role = document.getElementById('roleFilter').value;
+            
+            const params = new URLSearchParams();
+            if (category !== 'all') params.append('category', category);
+            if (search) params.append('search', search);
+            if (role) params.append('role', role);
+            
+            try {
+                const response = await fetch(`/api/applications?${params}`);
+                filteredApplications = await response.json();
+                
+                if (currentView === 'applications' || currentView === 'search') {
+                    showApplicationsView();
+                }
+            } catch (error) {
+                console.error('Error applying filters:', error);
+            }
+        }
+
+        // Show overview view
+        function showOverviewView() {
+            const content = document.getElementById('contentArea');
+            
+            if (!accessData) {
+                content.innerHTML = '<div>Loading data...</div>';
+                return;
+            }
+            
+            const stats = {
+                totalApps: accessData.applications?.length || 0,
+                primaryApps: accessData.applications?.filter(app => app.category === 'Primary Applications').length || 0,
+                supportingApps: accessData.applications?.filter(app => app.category === 'Supporting Applications').length || 0,
+                totalRoles: accessData.jobTitles?.length || 0,
+                departments: accessData.departments?.length || 0
+            };
+            
+            content.innerHTML = `
+                <h2>📊 System Overview</h2>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.totalApps}</div>
+                        <div class="stat-label">Total Applications</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.primaryApps}</div>
+                        <div class="stat-label">Primary Applications</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.supportingApps}</div>
+                        <div class="stat-label">Supporting Applications</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.totalRoles}</div>
+                        <div class="stat-label">Job Roles</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.departments}</div>
+                        <div class="stat-label">Departments</div>
+                    </div>
+                </div>
+                
+                <h3>🏢 Departments</h3>
+                <div class="role-grid">
+                    ${(accessData.departments || []).map(dept => {
+                        const roles = accessData.jobTitles?.filter(role => role.department === dept) || [];
+                        return `
+                            <div class="role-card">
+                                <div class="role-title">${dept}</div>
+                                <div class="role-stats">
+                                    <div class="role-stat">
+                                        <span>👥</span>
+                                        <span>${roles.length} roles</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                
+                <h3>🔑 Access Level Legend</h3>
+                <div class="stats">
+                    ${Object.entries(accessData.accessLevels || {}).map(([key, level]) => `
+                        <div class="stat-card">
+                            <div class="access-badge access-${key}">${key}</div>
+                            <div class="stat-label">${level.label}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Show applications view
+        function showApplicationsView() {
+            const content = document.getElementById('contentArea');
+            
+            if (!filteredApplications) {
+                content.innerHTML = '<div>Loading applications...</div>';
+                return;
+            }
+            
+            const tableRows = filteredApplications.map(app => `
+                <tr>
+                    <td><strong>${app.name}</strong></td>
+                    <td>${app.owner || 'Not assigned'}</td>
+                    <td><span class="access-badge" style="background: #e9ecef; color: #495057;">${app.category}</span></td>
+                    <td>${app.lastVerified || 'Never'}</td>
+                    <td>${Object.keys(app.access || {}).length} roles</td>
+                </tr>
+            `).join('');
+            
+            content.innerHTML = `
+                <h2>📱 Applications (${filteredApplications.length})</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Application</th>
+                                <th>Owner/SPOC</th>
+                                <th>Category</th>
+                                <th>Last Verified</th>
+                                <th>Access Rights</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows || '<tr><td colspan="5" style="text-align: center; color: #6c757d;">No applications found</td></tr>'}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // Show roles view
+        function showRolesView() {
+            const content = document.getElementById('contentArea');
+            
+            if (!accessData || !accessData.jobTitles) {
+                content.innerHTML = '<div>Loading roles...</div>';
+                return;
+            }
+            
+            content.innerHTML = `
+                <h2>👥 Job Roles (${accessData.jobTitles.length})</h2>
+                <div class="role-grid">
+                    ${accessData.jobTitles.map(role => {
+                        const accessCount = (accessData.applications || []).reduce((count, app) => {
+                            return count + ((app.access && app.access[role.title] && app.access[role.title] !== 'N') ? 1 : 0);
+                        }, 0);
+                        
+                        const adminCount = (accessData.applications || []).reduce((count, app) => {
+                            return count + ((app.access && app.access[role.title] === 'A') ? 1 : 0);
+                        }, 0);
+                        
+                        return `
+                            <div class="role-card">
+                                <div class="role-title">${role.title}</div>
+                                <div class="role-department">${role.department || 'No department'}</div>
+                                <div class="role-stats">
+                                    <div class="role-stat">
+                                        <span class="access-badge access-E">${accessCount}</span>
+                                        <span>apps</span>
+                                    </div>
+                                    <div class="role-stat">
+                                        <span class="access-badge access-A">${adminCount}</span>
+                                        <span>admin</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        // Show search view
+        function showSearchView() {
+            showApplicationsView();
+            document.querySelector('#contentArea h2').textContent = `🔍 Search Results (${filteredApplications.length})`;
+        }
+
+        // Show audit view
+        async function showAuditView() {
+            const content = document.getElementById('contentArea');
+            
+            if (!currentUser || !currentUser.canEdit) {
+                content.innerHTML = '<div style="text-align: center; color: #6c757d;">Access denied. Only editors can view audit logs.</div>';
+                return;
+            }
+            
+            content.innerHTML = '<div class="loading">Loading audit logs...</div>';
+            
+            try {
+                const response = await fetch('/api/audit-log');
+                const auditData = await response.json();
+                
+                content.innerHTML = `
+                    <h2>📋 Audit Log (${auditData.logs.length} entries)</h2>
+                    
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="stat-number">${auditData.logs.length}</div>
+                            <div class="stat-label">Total Log Entries</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${new Set(auditData.logs.map(log => log.user)).size}</div>
+                            <div class="stat-label">Unique Users</div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Action</th>
+                                    <th>User</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${auditData.logs.map(log => `
+                                    <tr>
+                                        <td>${new Date(log.timestamp).toLocaleString()}</td>
+                                        <td><span class="access-badge" style="background: #e9ecef; color: #495057;">${log.action}</span></td>
+                                        <td><strong>${log.user}</strong></td>
+                                        <td>${log.details}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Error loading audit logs:', error);
+                content.innerHTML = '<div style="text-align: center; color: red;">Error loading audit logs. Please try again.</div>';
+            }
+        }
+
+        // Export data
+        function exportData() {
+            window.open('/api/export', '_blank');
+        }
+
+        // Export audit log
+        function exportAuditLog() {
+            if (!currentUser || !currentUser.canEdit) return;
+            window.open('/api/audit-export', '_blank');
+        }
+
+        // Refresh data
+        async function refreshData() {
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('contentArea').style.display = 'none';
+            
+            await loadData();
+            switchTab(currentView);
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
