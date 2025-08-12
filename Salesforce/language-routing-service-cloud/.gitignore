@@ -23,3 +23,18 @@ build/
 # Temp files
 *.tmp
 *.temp
+# Prevent accidentally tracking parent directories
+../
+../../
+../../../
+
+# Specific unwanted directories
+**/IT\ Access\ Management/
+**/Personal/
+**/SpringProject/
+**/YouTube_Faceless_Channel/
+**/Notify_Contract_expiry/
+
+# System files
+.DS_Store
+.localized
