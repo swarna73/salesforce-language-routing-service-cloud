@@ -1,0 +1,24 @@
+{
+    "records": [
+        {
+            "attributes": {
+                "type": "Agent_Language_Skill__c",
+                "referenceId": "Agent_Language_Skill__cRef1"
+            },
+            "Name": "Swarnalatha - English",
+            "Language__c": "English",
+            "Proficiency_Level__c": "Native",
+            "Active__c": true
+        },
+        {
+            "attributes": {
+                "type": "Agent_Language_Skill__c",
+                "referenceId": "Agent_Language_Skill__cRef2"
+            },
+            "Name": "Swarnalatha - Dutch",
+            "Language__c": "Dutch",
+            "Proficiency_Level__c": "Native",
+            "Active__c": true
+        }
+    ]
+}
