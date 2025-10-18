@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Routing_Method__c</fullName>
+    <description>How this case was routed to an agent (automatic language routing, manual assignment, or escalation)</description>
+    <externalId>false</externalId>
+    <label>Routing Method</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Auto - Language Match</fullName>
+                <default>false</default>
+                <label>Auto - Language Match</label>
+            </value>
+            <value>
+                <fullName>Auto - Fallback</fullName>
+                <default>false</default>
+                <label>Auto - Fallback</label>
+            </value>
+            <value>
+                <fullName>Manual Assignment</fullName>
+                <default>true</default>
+                <label>Manual Assignment</label>
+            </value>
+            <value>
+                <fullName>Escalated - No Language Match</fullName>
+                <default>false</default>
+                <label>Escalated - No Language Match</label>
+            </value>
+            <value>
+                <fullName>Queue Assignment</fullName>
+                <default>false</default>
+                <label>Queue Assignment</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

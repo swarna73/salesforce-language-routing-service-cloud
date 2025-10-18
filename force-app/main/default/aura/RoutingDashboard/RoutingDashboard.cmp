@@ -1,0 +1,187 @@
+<aura:component implements="flexipage:availableForAllPageTypes" 
+               controller="RoutingDashboardController">
+    
+    <aura:attribute name="dashboardData" type="Object"/>
+    <aura:attribute name="isLoading" type="Boolean" default="true"/>
+    <aura:attribute name="lastUpdated" type="String" default=""/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div class="slds-card">
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <lightning:icon iconName="standard:dashboard" size="small"/>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">
+                        <span class="slds-text-heading_small">🧠 Language Routing Dashboard</span>
+                    </h2>
+                </div>
+                <div class="slds-no-flex">
+                    <lightning:button variant="neutral" 
+                                    label="Refresh" 
+                                    onclick="{!c.refreshData}"
+                                    disabled="{!v.isLoading}"/>
+                    <lightning:button variant="brand" 
+                                    label="Test Routing" 
+                                    onclick="{!c.testRouting}"
+                                    disabled="{!v.isLoading}"/>
+                </div>
+            </header>
+        </div>
+        
+        <div class="slds-card__body slds-card__body_inner">
+            
+            <aura:if isTrue="{!v.isLoading}">
+                <div class="slds-align_absolute-center" style="height: 200px;">
+                    <lightning:spinner alternativeText="Loading dashboard data..."/>
+                </div>
+                <aura:set attribute="else">
+                    
+                    <!-- Key Metrics Row -->
+                    <div class="slds-grid slds-wrap slds-gutters slds-m-bottom_large">
+                        
+                        <!-- Total Cases Today -->
+                        <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-2 slds-medium-size_1-of-4">
+                            <div class="slds-box slds-theme_default slds-text-align_center">
+                                <div class="slds-text-heading_large slds-text-color_success">
+                                    {!v.dashboardData.totalCases}
+                                </div>
+                                <div class="slds-text-body_small">
+                                    📋 Cases Processed Today
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Success Rate -->
+                        <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-2 slds-medium-size_1-of-4">
+                            <div class="slds-box slds-theme_default slds-text-align_center">
+                                <div class="slds-text-heading_large slds-text-color_success">
+                                    {!v.dashboardData.successRateDisplay}%
+                                </div>
+                                <div class="slds-text-body_small">
+                                    ✅ Routing Success Rate
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Average Confidence -->
+                        <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-2 slds-medium-size_1-of-4">
+                            <div class="slds-box slds-theme_default slds-text-align_center">
+                                <div class="slds-text-heading_large slds-text-color_default">
+                                    {!v.dashboardData.avgConfidenceDisplay}%
+                                </div>
+                                <div class="slds-text-body_small">
+                                    🧠 Avg Confidence
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Processing Speed -->
+                        <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-2 slds-medium-size_1-of-4">
+                            <div class="slds-box slds-theme_default slds-text-align_center">
+                                <div class="slds-text-heading_large slds-text-color_default">
+                                    {!v.dashboardData.avgProcessingTimeDisplay}ms
+                                </div>
+                                <div class="slds-text-body_small">
+                                    ⚡ Avg Processing Time
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts Row -->
+                    <div class="slds-grid slds-wrap slds-gutters slds-m-bottom_large">
+                        
+                        <!-- Language Breakdown -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                            <div class="slds-box">
+                                <h3 class="slds-text-heading_small slds-m-bottom_medium">
+                                    🌍 Language Detection Breakdown
+                                </h3>
+                                <aura:if isTrue="{!v.dashboardData.languageBreakdown.length > 0}">
+                                    <aura:iteration items="{!v.dashboardData.languageBreakdown}" var="lang" indexVar="index">
+                                        <div class="slds-grid slds-grid_align-spread slds-m-bottom_small">
+                                            <div class="slds-col">
+                                                <span class="slds-badge">{!lang.key}</span>
+                                            </div>
+                                            <div class="slds-col slds-shrink-none">
+                                                <strong>{!lang.value} cases</strong>
+                                            </div>
+                                        </div>
+                                        <div class="slds-progress-bar slds-progress-bar_small slds-m-bottom_small">
+                                            <span class="slds-progress-bar__value" 
+                                                  style="{!'width: ' + lang.percentage + '%'}">
+                                                <span class="slds-assistive-text">Progress: {!lang.value}</span>
+                                            </span>
+                                        </div>
+                                    </aura:iteration>
+                                    <aura:set attribute="else">
+                                        <p class="slds-text-color_weak">No language data available yet</p>
+                                    </aura:set>
+                                </aura:if>
+                            </div>
+                        </div>
+                        
+                        <!-- Queue Distribution -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                            <div class="slds-box">
+                                <h3 class="slds-text-heading_small slds-m-bottom_medium">
+                                    🎯 Queue Distribution
+                                </h3>
+                                <aura:if isTrue="{!v.dashboardData.queueBreakdown.length > 0}">
+                                    <aura:iteration items="{!v.dashboardData.queueBreakdown}" var="queue" indexVar="index">
+                                        <div class="slds-grid slds-grid_align-spread slds-m-bottom_small">
+                                            <div class="slds-col">
+                                                <span class="slds-badge slds-badge_lightest">{!queue.key}</span>
+                                            </div>
+                                            <div class="slds-col slds-shrink-none">
+                                                <strong>{!queue.value} cases</strong>
+                                            </div>
+                                        </div>
+                                        <div class="slds-progress-bar slds-progress-bar_small slds-m-bottom_small">
+                                            <span class="slds-progress-bar__value" 
+                                                  style="{!'width: ' + queue.percentage + '%'}">
+                                                <span class="slds-assistive-text">Progress: {!queue.value}</span>
+                                            </span>
+                                        </div>
+                                    </aura:iteration>
+                                    <aura:set attribute="else">
+                                        <p class="slds-text-color_weak">No queue data available yet</p>
+                                    </aura:set>
+                                </aura:if>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- System Status -->
+                    <div class="slds-box slds-theme_shade">
+                        <h3 class="slds-text-heading_small slds-m-bottom_medium">
+                            🔧 System Status
+                        </h3>
+                        <div class="slds-grid slds-gutters">
+                            <div class="slds-col">
+                                <span class="slds-badge slds-theme_success">✅ Auto-Routing Active</span>
+                            </div>
+                            <div class="slds-col">
+                                <span class="slds-badge slds-theme_success">✅ 6 Language Queues</span>
+                            </div>
+                            <div class="slds-col">
+                                <span class="slds-badge slds-theme_success">✅ Language Detection Online</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </aura:set>
+            </aura:if>
+        </div>
+        
+        <!-- Updated Footer with Your Name -->
+        <div class="slds-card__footer slds-text-align_center">
+            <span class="slds-text-body_small slds-text-color_weak">
+                Last updated: {!v.lastUpdated} | Developed by Swarnalatha Swaminathan
+            </span>
+        </div>
+    </div>
+</aura:component>

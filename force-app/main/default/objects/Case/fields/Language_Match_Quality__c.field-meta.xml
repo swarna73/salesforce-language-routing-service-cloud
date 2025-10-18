@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Language_Match_Quality__c</fullName>
+    <description>Quality of the language-agent match based on agent proficiency level</description>
+    <externalId>false</externalId>
+    <label>Language Match Quality</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Perfect - Native Speaker</fullName>
+                <default>false</default>
+                <label>Perfect - Native Speaker</label>
+            </value>
+            <value>
+                <fullName>Excellent - Fluent</fullName>
+                <default>false</default>
+                <label>Excellent - Fluent</label>
+            </value>
+            <value>
+                <fullName>Good - Professional</fullName>
+                <default>true</default>
+                <label>Good - Professional</label>
+            </value>
+            <value>
+                <fullName>Fair - Conversational</fullName>
+                <default>false</default>
+                <label>Fair - Conversational</label>
+            </value>
+            <value>
+                <fullName>Poor - Basic</fullName>
+                <default>false</default>
+                <label>Poor - Basic</label>
+            </value>
+            <value>
+                <fullName>No Match</fullName>
+                <default>false</default>
+                <label>No Match</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
